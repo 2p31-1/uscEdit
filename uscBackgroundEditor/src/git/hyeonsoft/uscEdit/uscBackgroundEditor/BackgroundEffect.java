@@ -12,5 +12,7 @@ public class BackgroundEffect {
 	public Vector<EffectType> effect = new Vector<EffectType>();
 	public Vector<Double> effectParameter = new Vector<Double>();
 	public String imagePath = new String();
-	
+	public void editEffect() {
+		
+	}
 }

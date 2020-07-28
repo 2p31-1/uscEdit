@@ -26,8 +26,11 @@ public class UscBackgroundEditor {
 	JFrame mainWindow;
 	JPanel mainPanel;
 	BackgroundEffect clipboard;
+	Setting setting;
 	
 	public UscBackgroundEditor(){
+		//basic Settings initialize
+		setting = new Setting();
 		//window initialize
 		mainWindow = new JFrame();
 		makeMenu();
