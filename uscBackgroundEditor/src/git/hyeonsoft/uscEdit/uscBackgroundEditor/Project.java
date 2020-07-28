@@ -3,10 +3,15 @@ package git.hyeonsoft.uscEdit.uscBackgroundEditor;
 
 import java.awt.FileDialog;
 import java.awt.GridLayout;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -170,12 +175,53 @@ public class Project {
 		dialog.setVisible(true);
 	}
 	public void exportProject() {
-		JFrame f = new JFrame();
-	    f.setSize(350,250);     
-	    f.setLayout( null );
-	    f.setVisible(false);
-		FileDialog dialog = new FileDialog(f, "Save", FileDialog.SAVE);
-		dialog.setFilenameFilter(new LUAFileFilter());
-		dialog.setVisible(true);
+		JFrame dialog = new JFrame();
+	    dialog.setVisible(false);
+	    JFileChooser folderChooser = new JFileChooser(new java.io.File("."));
+	    folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	    folderChooser.setDialogTitle("Select folder to export");
+	    folderChooser.setSize(800, 600);
+		int result = folderChooser.showSaveDialog(dialog);
+		Vector<String> images = new Vector<String>();
+		Vector<Integer> imagesIndex = new Vector<Integer>();
+		for(BackgroundEffect x : backgroundEffect) {
+			if(!images.contains(x.imagePath)) {
+				images.add(x.imagePath);
+			}
+			imagesIndex.add(images.indexOf(x.imagePath));
+		}
+		
+		if (result==JFileChooser.CANCEL_OPTION)return;
+		try{
+			OutputStream fos = new FileOutputStream(folderChooser.getSelectedFile()+"/fg.lua", false);
+			fos.write("".getBytes());
+			fos.close();
+			fos = new DataOutputStream(new FileOutputStream(folderChooser.getSelectedFile()+"/fg.fs", false));
+			fos.write("void main(){}".getBytes());
+			fos.close();
+			fos = new DataOutputStream(new FileOutputStream(folderChooser.getSelectedFile()+"/bg.lua", false));
+			
+			for(int k=0;k<images.size();k++) {
+				fos.write(("local image"+k+"=gfx.CreateImage(background.GetPath() .. \""+images.get(k)+"\", 1);\n").getBytes());
+			}
+			fos.write(("local resX,resY = game.GetResolution();\n"
+					+ "local centerX = resX/2\n" + 
+					"local centerY = resY/2\n" + 
+					"local small = 0\n" + 
+					"if centerX<centerY then\n" + 
+					"	small=centerX\n" + 
+					"else\r\n" + 
+					"	small=centerY\n" + 
+					"end").getBytes());
+			fos.close();
+			fos = new DataOutputStream(new FileOutputStream(folderChooser.getSelectedFile()+"/bg.fs", false));
+			fos.write("void main(){}".getBytes());
+			fos.close();
+		}catch(IOException exception) {
+			JFrame alert = new JFrame();
+		    alert.setSize(350,250);
+		    alert.add(new JLabel("Failed to save"));
+		    alert.setVisible(true);
+		}
 	}
 }
