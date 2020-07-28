@@ -10,6 +10,7 @@ public class BackgroundEffect {
 	public Double fadeOut = 0.5;
 	public Double size = 1.0;
 	public Vector<EffectType> effect = new Vector<EffectType>();
+	public SizeReference sizeReference = SizeReference.BASED_ON_LONGER_AXIS;
 	public Vector<Double> effectParameter = new Vector<Double>();
 	public String imagePath = new String();
 	public void editEffect() {

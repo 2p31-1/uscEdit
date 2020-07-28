@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -43,7 +45,7 @@ public class Project {
 		dialogControl.setLayout( null );
 		dialogControl.setVisible(false);
 		JDialog dialog = new JDialog(dialogControl);
-		dialog.setLayout(new GridLayout(8, 3));
+		dialog.setLayout(new GridLayout(10, 2));
 		dialog.setSize(600, 300);
 		dialog.setTitle("Add Effects");
 		
@@ -55,6 +57,9 @@ public class Project {
 		JTextField fadeOut = new JTextField(modifyBackgroundEffect.fadeOut.toString());
 		JTextField size = new JTextField(modifyBackgroundEffect.size.toString());
 		JTextField imagePath = new JTextField(modifyBackgroundEffect.imagePath);
+		String sizeReferenceText[] = {"longer axis", "shorter axis"};
+		JComboBox <String> sizeReference = new JComboBox<String>(sizeReferenceText);
+		sizeReference.setSelectedIndex(modifyBackgroundEffect.sizeReference.ordinal());
 		dialog.add(new JLabel("effect name"));
 		dialog.add(effectName);
 		dialog.add(new JLabel("start time"));
@@ -69,6 +74,8 @@ public class Project {
 		dialog.add(size);
 		dialog.add(new JLabel("image path"));
 		dialog.add(imagePath);
+		dialog.add(new JLabel("size 1.0 based on"));
+		dialog.add(sizeReference);
 		JButton ok = new JButton("ok");
 		JButton editEffect = new JButton("Edit Effects");
 		ok.addActionListener(e -> {
@@ -79,6 +86,7 @@ public class Project {
 			modifyBackgroundEffect.size=Double.parseDouble(size.getText());
 			modifyBackgroundEffect.imagePath=imagePath.getText();
 			modifyBackgroundEffect.effectName=(effectName.getText());
+			modifyBackgroundEffect.sizeReference=BackgroundEffect.SizeReference.values()[sizeReference.getSelectedIndex()];
 			if(selectedEffect!=-1)backgroundEffect.add(selectedEffect, modifyBackgroundEffect);
 			else backgroundEffect.add(modifyBackgroundEffect);
 			sup.makeScreen();
@@ -101,7 +109,7 @@ public class Project {
 		dialogControl.setLayout( null );
 		dialogControl.setVisible(false);
 		JDialog dialog = new JDialog(dialogControl);
-		dialog.setLayout(new GridLayout(8, 3));
+		dialog.setLayout(new GridLayout(10, 2));
 		dialog.setSize(600, 300);
 		dialog.setTitle("Edit Effects");
 		int selectedEffect = this.selectedEffect;
@@ -114,6 +122,9 @@ public class Project {
 		JTextField fadeOut = new JTextField(modifyBackgroundEffect.fadeOut.toString());
 		JTextField size = new JTextField(modifyBackgroundEffect.size.toString());
 		JTextField imagePath = new JTextField(modifyBackgroundEffect.imagePath);
+		String sizeReferenceText[] = {"longer axis", "shorter axis"};
+		JComboBox <String> sizeReference = new JComboBox<String>(sizeReferenceText);
+		sizeReference.setSelectedIndex(modifyBackgroundEffect.sizeReference.ordinal());
 		dialog.add(new JLabel("effect name"));
 		dialog.add(effectName);
 		dialog.add(new JLabel("start time"));
@@ -128,6 +139,8 @@ public class Project {
 		dialog.add(size);
 		dialog.add(new JLabel("image path"));
 		dialog.add(imagePath);
+		dialog.add(new JLabel("size 1.0 based on"));
+		dialog.add(sizeReference);
 		JButton ok = new JButton("ok");
 		JButton editEffect = new JButton("Edit Effects");
 		ok.addActionListener(e -> {
@@ -138,6 +151,7 @@ public class Project {
 			modifyBackgroundEffect.size=Double.parseDouble(size.getText());
 			modifyBackgroundEffect.imagePath=imagePath.getText();
 			modifyBackgroundEffect.effectName=(effectName.getText());
+			modifyBackgroundEffect.sizeReference=BackgroundEffect.SizeReference.values()[sizeReference.getSelectedIndex()];
 			backgroundEffect.set(selectedEffect, modifyBackgroundEffect);
 			sup.makeScreen();
 			dialogControl.setVisible(false);
