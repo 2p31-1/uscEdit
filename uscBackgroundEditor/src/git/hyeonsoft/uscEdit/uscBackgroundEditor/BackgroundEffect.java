@@ -15,4 +15,12 @@ public class BackgroundEffect {
 	public void editEffect() {
 		
 	}
+	public enum EffectType {
+		FLOATING,
+		ROTATING
+	}
+	public enum SizeReference {
+		BASED_ON_LONGER_AXIS, //When making Backgrounds
+		BASED_ON_SHORTER_AXIS //When making Characters
+	}
 }

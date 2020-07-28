@@ -103,7 +103,7 @@ public class Project {
 		JDialog dialog = new JDialog(dialogControl);
 		dialog.setLayout(new GridLayout(8, 3));
 		dialog.setSize(600, 300);
-		dialog.setTitle("Add Effects");
+		dialog.setTitle("Edit Effects");
 		int selectedEffect = this.selectedEffect;
 		
 		BackgroundEffect modifyBackgroundEffect = backgroundEffect.get(selectedEffect);
