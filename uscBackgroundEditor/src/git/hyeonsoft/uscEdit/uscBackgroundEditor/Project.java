@@ -9,6 +9,7 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 public class Project {
@@ -16,7 +17,7 @@ public class Project {
 	public String path="";
 	public String filename="";
 	public String songpath="";
-	public int selectedEffect=0; //Selected Effect number
+	public int selectedEffect=-1; //Selected Effect number
 	JDialog dialog;
 	public Vector<String> getLists(){
 		Vector<String> l = new Vector<String>();
@@ -28,6 +29,9 @@ public class Project {
 		return l;
 	}
 	public BackgroundEffect getEffect() {
+		if(backgroundEffect.get(selectedEffect)==null) {
+			return null;
+		}
 		return backgroundEffect.get(selectedEffect);
 	}
 	public void addEffect(UscBackgroundEditor sup) {
@@ -35,8 +39,8 @@ public class Project {
 	    f.setLayout( null );
 	    f.setVisible(false);
 		dialog = new JDialog(f);
-		dialog.setLayout(new GridLayout(2, 0));
-		dialog.setSize(600, 300);
+		dialog.setLayout(new GridLayout(8, 3));
+		dialog.setSize(1000, 600);
 		dialog.setTitle("Add Effects");
 		
 		BackgroundEffect modifyBackgroundEffect = new BackgroundEffect();
@@ -47,8 +51,22 @@ public class Project {
 		JTextField fadeOut = new JTextField(modifyBackgroundEffect.fadeOut.toString());
 		JTextField size = new JTextField(modifyBackgroundEffect.size.toString());
 		JTextField imagePath = new JTextField(modifyBackgroundEffect.imagePath);
-		
+		dialog.add(new JLabel("effect name"));
+		dialog.add(effectName);
+		dialog.add(new JLabel("start time"));
+		dialog.add(startTime);
+		dialog.add(new JLabel("end time"));
+		dialog.add(endTime);
+		dialog.add(new JLabel("fade in time"));
+		dialog.add(fadeIn);
+		dialog.add(new JLabel("fade out time"));
+		dialog.add(fadeOut);
+		dialog.add(new JLabel("size"));
+		dialog.add(size);
+		dialog.add(new JLabel("image path"));
+		dialog.add(imagePath);
 		JButton ok = new JButton("ok");
+		JButton editEffect = new JButton("Edit Effects");
 		ok.addActionListener(e -> {
 			modifyBackgroundEffect.startTime=Double.parseDouble(startTime.getText());
 			modifyBackgroundEffect.endTime=Double.parseDouble(endTime.getText());
@@ -60,7 +78,8 @@ public class Project {
 			backgroundEffect.add(modifyBackgroundEffect);
 			sup.makeScreen();
 		});
-		dialog.add(ok, BorderLayout.SOUTH);
+		dialog.add(ok);
+		dialog.add(editEffect);
 		dialog.setVisible(true);
 	}
 	public void addEffect(UscBackgroundEditor sup, BackgroundEffect clipboard) {
@@ -70,7 +89,11 @@ public class Project {
 		
 	}
 	public void deleteEffect(UscBackgroundEditor sup) {
-		
+		if(selectedEffect!=-1) {
+			backgroundEffect.removeElementAt(selectedEffect);
+		}
+		selectedEffect=-1;
+		sup.makeScreen();
 	}
 	public void loadProject() {
 		JFrame f = new JFrame();

@@ -59,16 +59,16 @@ public class UscBackgroundEditor {
 			project.addEffect(this);
 		});
 		editEffect.addActionListener(e -> {
-			//project.editEffect(this);
+			project.editEffect(this);
 		});
 		deleteEffect.addActionListener(e -> {
-			//project.deleteEffect(this);
+			project.deleteEffect(this);
 		});
 		copyEffect.addActionListener(e -> {
-			//clipboard = project.getEffect(this);
+			clipboard = project.getEffect();
 		});
 		pasteEffect.addActionListener(e -> {
-			//project.addEffect(this, clipboard);
+			project.addEffect(this, clipboard);
 		});
 
 		rightPanel.add(addEffect);
