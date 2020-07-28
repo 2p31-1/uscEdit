@@ -24,4 +24,8 @@ public class BackgroundEffect {
 		BASED_ON_LONGER_AXIS, //When making Backgrounds
 		BASED_ON_SHORTER_AXIS //When making Characters
 	}
+	public String getLuaScript(int imageIndex) {
+		String script="--"+effectName+"starts\nstart="+startTime.toString()+"\nend_="+endTime.toString()+"\n";
+		return script;
+	}
 }

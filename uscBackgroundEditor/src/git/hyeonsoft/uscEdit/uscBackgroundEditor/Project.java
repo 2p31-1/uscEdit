@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -35,10 +34,11 @@ public class Project {
 		return l;
 	}
 	public BackgroundEffect getEffect() {
-		if(backgroundEffect.get(selectedEffect)==null) {
+		try {
+			return backgroundEffect.get(selectedEffect);
+		}catch (Exception e) {
 			return null;
 		}
-		return backgroundEffect.get(selectedEffect);
 	}
 	public void addEffect(UscBackgroundEditor sup) {
 		JFrame dialogControl = new JFrame();
@@ -100,11 +100,13 @@ public class Project {
 		dialog.setVisible(true);
 	}
 	public void addEffect(UscBackgroundEditor sup, BackgroundEffect clipboard) {
+		if(clipboard==null)return;
 		if(selectedEffect!=-1)backgroundEffect.add(selectedEffect, clipboard);
 		else backgroundEffect.add(clipboard);
 		sup.makeScreen();
 	}
 	public void editEffect(UscBackgroundEditor sup) {
+		if(selectedEffect!=-1)return;
 		JFrame dialogControl = new JFrame();
 		dialogControl.setLayout( null );
 		dialogControl.setVisible(false);
@@ -114,6 +116,7 @@ public class Project {
 		dialog.setTitle("Edit Effects");
 		int selectedEffect = this.selectedEffect;
 		
+		try {
 		BackgroundEffect modifyBackgroundEffect = backgroundEffect.get(selectedEffect);
 		JTextField effectName = new JTextField(modifyBackgroundEffect.effectName);
 		JTextField startTime = new JTextField(modifyBackgroundEffect.startTime.toString());
@@ -162,6 +165,9 @@ public class Project {
 		dialog.add(ok);
 		dialog.add(editEffect);
 		dialog.setVisible(true);
+		}catch(Exception e) {
+			return;
+		}
 	}
 	public void deleteEffect(UscBackgroundEditor sup) {
 		if(selectedEffect!=-1) {
@@ -221,12 +227,31 @@ public class Project {
 			fos.write(("local resX,resY = game.GetResolution();\n"
 					+ "local centerX = resX/2\n" + 
 					"local centerY = resY/2\n" + 
-					"local small = 0\n" + 
-					"if centerX<centerY then\n" + 
-					"	small=centerX\n" + 
+					"local small = 0\n"
+					+ "local large = 0\n" + 
+					"if resX<resY then\n" + 
+					"	small=resX\n"
+					+ "	large = resY\n" + 
 					"else\r\n" + 
-					"	small=centerY\n" + 
-					"end").getBytes());
+					"	small=resY\n"
+					+ "	large=resX\n" + 
+					"end\n"
+					+ "function render_bg(deltaTime)\n"
+					+ "local start, end_\n" + 
+					"if resX<resY then\n" + 
+					"	small=resX\n" + 
+					"	large = resY\n" + 
+					"else\n" + 
+					"	small=resY\n" + 
+					"	large=resX\n" + 
+					"end\n"
+					+ "background.DrawShader()\n"
+					+ "local bartime, offsync, real = background.GetTiming()\n").getBytes());
+			for(int i=0;i<backgroundEffect.size();i++) {
+				fos.write(backgroundEffect.get(i).getLuaScript(imagesIndex.get(i)).getBytes());
+				fos.write("\n".getBytes());
+			}
+			fos.write("end\n".getBytes());
 			fos.close();
 			fos = new DataOutputStream(new FileOutputStream(folderChooser.getSelectedFile()+"/bg.fs", false));
 			fos.write("void main(){}".getBytes());

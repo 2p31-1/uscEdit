@@ -114,11 +114,23 @@ public class UscBackgroundEditor {
 		JMenuItem itemLoad = new JMenuItem("Open");
 		JMenuItem itemSave = new JMenuItem("Save");
 		JMenuItem itemExport = new JMenuItem("Export Project");
-		
+		JMenuItem itemExit = new JMenuItem("Exit");
+		JMenu menuEdit = new JMenu("Edit");
+		JMenuItem itemEffectCut = new JMenuItem("Cut effect");
+		JMenuItem itemEffectCopy = new JMenuItem("Copy effect");
+		JMenuItem itemEffectPaste = new JMenuItem("Paste effect");
+		JMenuItem itemEffectDelete = new JMenuItem("Delete effect");
+
 		menuFile.setMnemonic(KeyEvent.VK_F);
+		menuEdit.setMnemonic(KeyEvent.VK_E);
 		itemNew.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		itemLoad.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		itemSave.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		itemEffectCut.setAccelerator(KeyStroke.getKeyStroke('X', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		itemEffectCopy.setAccelerator(KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		itemEffectPaste.setAccelerator(KeyStroke.getKeyStroke('V', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		itemEffectDelete.setMnemonic(KeyEvent.VK_DELETE);
+		
 		
 		itemNew.addActionListener((ActionEvent e) -> {
 			project = new Project();
@@ -136,11 +148,34 @@ public class UscBackgroundEditor {
 			project.exportProject();
 			makeScreen();
 		});
+		itemExit.addActionListener(e -> {
+			System.exit(0);
+		});
+		itemEffectCut.addActionListener(e -> {
+			clipboard = project.getEffect();
+			project.deleteEffect(this);
+		});
+		itemEffectCopy.addActionListener(e -> {
+			clipboard = project.getEffect();
+		});
+		itemEffectPaste.addActionListener(e -> {
+			project.addEffect(this, clipboard);
+		});
+		itemEffectDelete.addActionListener(e -> {
+			project.deleteEffect(this);
+		});
+		
 		menuFile.add(itemNew);
 		menuFile.add(itemLoad);
 		menuFile.add(itemSave);
 		menuFile.add(itemExport);
+		menuFile.add(itemExit);
+		menuEdit.add(itemEffectCut);
+		menuEdit.add(itemEffectCopy);
+		menuEdit.add(itemEffectPaste);
+		menuEdit.add(itemEffectDelete);
 		menuBar.add(menuFile);
+		menuBar.add(menuEdit);
 		mainWindow.setJMenuBar(menuBar);
 	}
 	
