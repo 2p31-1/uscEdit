@@ -1,12 +1,20 @@
 package git.hyeonsoft.uscEdit.uscBackgroundEditor;
 // Save / Load files. Contains informations of background information.
 
+import com.google.gson.Gson;
+
 import java.awt.FileDialog;
 import java.awt.GridLayout;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Scanner;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -181,16 +189,42 @@ public class Project {
 		FileDialog dialog = new FileDialog(f, "Load", FileDialog.LOAD);
 		dialog.setFilenameFilter(new USCBGPROJFileFilter());
 		dialog.setVisible(true);
-		projectfilename = dialog.getDirectory()+dialog.getFile();
-		
+		projectfilename = dialog.getDirectory()+'\\'+dialog.getFile();
+		try{
+			Scanner fis = new Scanner(new File(projectfilename));
+			Gson gson = new Gson();
+			String json = "";
+			while(fis.hasNextLine()) {
+				json+=fis.nextLine();
+			}
+			BackgroundEffect[] backgroundEffectArray = gson.fromJson(json, BackgroundEffect[].class);
+			backgroundEffect = new Vector<BackgroundEffect>(Arrays.asList(backgroundEffectArray));
+			fis.close();
+		}
+		catch(IOException e) {
+			
+		}
 	}
 	public void saveProject() {
-		JFrame f = new JFrame();
-	    f.setLayout( null );
-	    f.setVisible(false);
-		FileDialog dialog = new FileDialog(f, "Save", FileDialog.SAVE);
-		dialog.setFilenameFilter(new USCBGPROJFileFilter());
-		dialog.setVisible(true);
+		if(projectfilename==null) {
+			JFrame f = new JFrame();
+		    f.setLayout( null );
+		    f.setVisible(false);
+			FileDialog dialog = new FileDialog(f, "Save", FileDialog.SAVE);
+			dialog.setFilenameFilter(new USCBGPROJFileFilter());
+			dialog.setVisible(true);
+			projectfilename = dialog.getDirectory()+'\\'+dialog.getFile();
+		}
+		Gson gson = new Gson();
+		String json = gson.toJson(backgroundEffect);
+		try{
+			OutputStream fos = new FileOutputStream(projectfilename, false);
+			fos.write(json.getBytes());
+			fos.close();
+		}
+		catch(Exception e) {
+			
+		}
 	}
 	public void exportProject() {
 		JFrame dialog = new JFrame();
