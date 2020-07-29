@@ -11,14 +11,15 @@ public class BackgroundEffect {
 	public Double size = 1.0;
 	public Vector<EffectType> effect = new Vector<EffectType>();
 	public SizeReference sizeReference = SizeReference.BASED_ON_LONGER_AXIS;
-	public Vector<Double> effectParameter = new Vector<Double>();
+	public Vector<String> effectParameter = new Vector<String>();
 	public String imagePath = new String();
 	public void editEffect() {
 		
 	}
 	public enum EffectType {
 		FLOATING,
-		ROTATING
+		ROTATING,
+		VIDEO
 	}
 	public enum SizeReference {
 		BASED_ON_LONGER_AXIS, //When making Backgrounds
@@ -27,5 +28,8 @@ public class BackgroundEffect {
 	public String getLuaScript(int imageIndex) {
 		String script="--"+effectName+"starts\nstart="+startTime.toString()+"\nend_="+endTime.toString()+"\n";
 		return script;
+	}
+	public String getInfo() {
+		return effectName+", Starts at "+startTime.toString()+", ends at "+endTime.toString()+". Image at \""+imagePath+"\"";
 	}
 }

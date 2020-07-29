@@ -27,9 +27,7 @@ public class Project {
 	public Vector<String> getLists(){
 		Vector<String> l = new Vector<String>();
 		for(BackgroundEffect x : backgroundEffect) {
-			String lv;
-			lv=x.effectName+", Starts at "+x.startTime.toString()+", ends at "+x.endTime.toString()+". Image at \""+x.imagePath+"\"";
-			l.add(lv);
+			l.add(x.getInfo());
 		}
 		return l;
 	}
@@ -106,7 +104,7 @@ public class Project {
 		sup.makeScreen();
 	}
 	public void editEffect(UscBackgroundEditor sup) {
-		if(selectedEffect!=-1)return;
+		if(selectedEffect==-1)return;
 		JFrame dialogControl = new JFrame();
 		dialogControl.setLayout( null );
 		dialogControl.setVisible(false);
