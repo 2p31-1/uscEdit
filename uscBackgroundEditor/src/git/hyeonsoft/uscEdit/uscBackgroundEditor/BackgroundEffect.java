@@ -1,6 +1,15 @@
 package git.hyeonsoft.uscEdit.uscBackgroundEditor;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListModel;
 
 public class BackgroundEffect {
 	public String effectName = "effect";
@@ -13,8 +22,37 @@ public class BackgroundEffect {
 	public SizeReference sizeReference = SizeReference.BASED_ON_LONGER_AXIS;
 	public Vector<String> effectParameter = new Vector<String>();
 	public String imagePath = new String();
+	private transient JFrame subFrame;
+	private transient JPanel mainPanel;
+	private void editEffectUpdate() {
+		mainPanel = new JPanel(new BorderLayout());
+		Vector <String> effectNames = new Vector<String>();
+		for(EffectType x : effect) {
+			effectNames.add(x.toString());
+		}
+		JList<String> effectList = new JList<String>(effectNames);
+		effectList.setSelectionMode(1);
+		effectList.setLayoutOrientation(JList.VERTICAL);
+		JScrollPane effectListScroller = new JScrollPane(effectList);
+		effectListScroller.setPreferredSize(new Dimension(900,500));
+		mainPanel.add(effectListScroller, BorderLayout.CENTER);
+		JButton ok = new JButton("ok");
+		ok.addActionListener(e -> {
+			System.out.println(effectList.getSelectedIndex());
+			effect.add(EffectType.FLOATING);
+			editEffectUpdate();
+		});
+		mainPanel.add(ok, BorderLayout.SOUTH);
+		subFrame.remove(mainPanel);
+		subFrame.add(mainPanel);
+		subFrame.revalidate();
+	}
 	public void editEffect() {
-		
+		subFrame = new JFrame();
+		subFrame.setTitle("edit effects");
+		subFrame.setSize(1000, 600);
+		editEffectUpdate();
+		subFrame.setVisible(true);
 	}
 	public enum EffectType {
 		FLOATING,
