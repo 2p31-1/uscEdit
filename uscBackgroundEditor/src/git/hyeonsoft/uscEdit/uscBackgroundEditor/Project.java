@@ -58,7 +58,8 @@ public class Project {
 		JTextField endTime = new JTextField(modifyBackgroundEffect.endTime.toString());
 		JTextField fadeIn = new JTextField(modifyBackgroundEffect.fadeIn.toString());
 		JTextField fadeOut = new JTextField(modifyBackgroundEffect.fadeOut.toString());
-		JTextField size = new JTextField(modifyBackgroundEffect.size.toString());
+		JTextField width = new JTextField(modifyBackgroundEffect.width.toString());
+		JTextField height = new JTextField(modifyBackgroundEffect.height.toString());
 		JTextField imagePath = new JTextField(modifyBackgroundEffect.imagePath);
 		String sizeReferenceText[] = {"longer axis", "shorter axis"};
 		JComboBox <String> sizeReference = new JComboBox<String>(sizeReferenceText);
@@ -73,8 +74,10 @@ public class Project {
 		dialog.add(fadeIn);
 		dialog.add(new JLabel("fade out time"));
 		dialog.add(fadeOut);
-		dialog.add(new JLabel("size"));
-		dialog.add(size);
+		dialog.add(new JLabel("size width"));
+		dialog.add(width);
+		dialog.add(new JLabel("size height"));
+		dialog.add(height);
 		dialog.add(new JLabel("image path"));
 		dialog.add(imagePath);
 		dialog.add(new JLabel("size 1.0 based on"));
@@ -86,7 +89,8 @@ public class Project {
 			modifyBackgroundEffect.endTime=Double.parseDouble(endTime.getText());
 			modifyBackgroundEffect.fadeIn=Double.parseDouble(fadeIn.getText());
 			modifyBackgroundEffect.fadeOut=Double.parseDouble(fadeOut.getText());
-			modifyBackgroundEffect.size=Double.parseDouble(size.getText());
+			modifyBackgroundEffect.width=Double.parseDouble(width.getText());
+			modifyBackgroundEffect.height=Double.parseDouble(height.getText());
 			modifyBackgroundEffect.imagePath=imagePath.getText();
 			modifyBackgroundEffect.effectName=(effectName.getText());
 			modifyBackgroundEffect.sizeReference=BackgroundEffect.SizeReference.values()[sizeReference.getSelectedIndex()];
@@ -126,7 +130,8 @@ public class Project {
 		JTextField endTime = new JTextField(modifyBackgroundEffect.endTime.toString());
 		JTextField fadeIn = new JTextField(modifyBackgroundEffect.fadeIn.toString());
 		JTextField fadeOut = new JTextField(modifyBackgroundEffect.fadeOut.toString());
-		JTextField size = new JTextField(modifyBackgroundEffect.size.toString());
+		JTextField width = new JTextField(modifyBackgroundEffect.width.toString());
+		JTextField height = new JTextField(modifyBackgroundEffect.height.toString());
 		JTextField imagePath = new JTextField(modifyBackgroundEffect.imagePath);
 		String sizeReferenceText[] = {"longer axis", "shorter axis"};
 		JComboBox <String> sizeReference = new JComboBox<String>(sizeReferenceText);
@@ -141,8 +146,10 @@ public class Project {
 		dialog.add(fadeIn);
 		dialog.add(new JLabel("fade out time"));
 		dialog.add(fadeOut);
-		dialog.add(new JLabel("size"));
-		dialog.add(size);
+		dialog.add(new JLabel("size width"));
+		dialog.add(width);
+		dialog.add(new JLabel("size height"));
+		dialog.add(height);
 		dialog.add(new JLabel("image path"));
 		dialog.add(imagePath);
 		dialog.add(new JLabel("size 1.0 based on"));
@@ -154,7 +161,8 @@ public class Project {
 			modifyBackgroundEffect.endTime=Double.parseDouble(endTime.getText());
 			modifyBackgroundEffect.fadeIn=Double.parseDouble(fadeIn.getText());
 			modifyBackgroundEffect.fadeOut=Double.parseDouble(fadeOut.getText());
-			modifyBackgroundEffect.size=Double.parseDouble(size.getText());
+			modifyBackgroundEffect.width=Double.parseDouble(width.getText());
+			modifyBackgroundEffect.height=Double.parseDouble(height.getText());
 			modifyBackgroundEffect.imagePath=imagePath.getText();
 			modifyBackgroundEffect.effectName=(effectName.getText());
 			modifyBackgroundEffect.sizeReference=BackgroundEffect.SizeReference.values()[sizeReference.getSelectedIndex()];
@@ -232,12 +240,11 @@ public class Project {
 	    folderChooser.setSize(800, 600);
 		int result = folderChooser.showSaveDialog(dialog);
 		Vector<String> images = new Vector<String>();
-		Vector<Integer> imagesIndex = new Vector<Integer>();
-		for(BackgroundEffect x : backgroundEffect) {
-			if(!images.contains(x.imagePath)) {
-				images.add(x.imagePath);
+		for(int i=0;i<backgroundEffect.size();i++) {
+			if(!images.contains(backgroundEffect.get(i).imagePathDependencies(i))) {
+				images.add(backgroundEffect.get(i).imagePathDependencies(i));
 			}
-			imagesIndex.add(images.indexOf(x.imagePath));
+			backgroundEffect.get(i).imagesIndex = i;
 		}
 		
 		if (result==JFileChooser.CANCEL_OPTION)return;
@@ -251,7 +258,7 @@ public class Project {
 			fos = new DataOutputStream(new FileOutputStream(folderChooser.getSelectedFile()+"/bg.lua", false));
 			
 			for(int k=0;k<images.size();k++) {
-				fos.write(("local image"+k+"=gfx.CreateImage(background.GetPath() .. \""+images.get(k)+"\", 1);\n").getBytes());
+				fos.write((images.get(k)+"\n").getBytes());
 			}
 			fos.write(("local resX,resY = game.GetResolution();\n"
 					+ "local centerX = resX/2\n" + 
@@ -277,7 +284,7 @@ public class Project {
 					+ "background.DrawShader()\n"
 					+ "local bartime, offsync, real = background.GetTiming()\n").getBytes());
 			for(int i=0;i<backgroundEffect.size();i++) {
-				fos.write(backgroundEffect.get(i).getLuaScript(imagesIndex.get(i)).getBytes());
+				fos.write(backgroundEffect.get(i).getLuaScript().getBytes());
 				fos.write("\n".getBytes());
 			}
 			fos.write("end\n".getBytes());

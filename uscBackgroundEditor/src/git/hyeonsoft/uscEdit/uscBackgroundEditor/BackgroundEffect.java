@@ -9,7 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ListModel;
+
+import git.hyeonsoft.uscEdit.uscBackgroundEditor.EffectType.*;
 
 public class BackgroundEffect {
 	public String effectName = "effect";
@@ -17,18 +18,20 @@ public class BackgroundEffect {
 	public Double endTime = 10.0;
 	public Double fadeIn = 0.5;
 	public Double fadeOut = 0.5;
-	public Double size = 1.0;
+	public Double width = 1.0;
+	public Double height = 1.0;
 	public Vector<EffectType> effect = new Vector<EffectType>();
 	public SizeReference sizeReference = SizeReference.BASED_ON_LONGER_AXIS;
 	public Vector<String> effectParameter = new Vector<String>();
 	public String imagePath = new String();
+	public int imagesIndex = 0;
 	private transient JFrame subFrame;
 	private transient JPanel mainPanel;
 	private void editEffectUpdate() {
 		mainPanel = new JPanel(new BorderLayout());
 		Vector <String> effectNames = new Vector<String>();
 		for(EffectType x : effect) {
-			effectNames.add(x.toString());
+			effectNames.add(x.getInfo());
 		}
 		JList<String> effectList = new JList<String>(effectNames);
 		effectList.setSelectionMode(1);
@@ -38,8 +41,7 @@ public class BackgroundEffect {
 		mainPanel.add(effectListScroller, BorderLayout.CENTER);
 		JButton ok = new JButton("ok");
 		ok.addActionListener(e -> {
-			System.out.println(effectList.getSelectedIndex());
-			effect.add(EffectType.FLOATING);
+			effect.add(new Floating());
 			editEffectUpdate();
 		});
 		mainPanel.add(ok, BorderLayout.SOUTH);
@@ -54,20 +56,18 @@ public class BackgroundEffect {
 		editEffectUpdate();
 		subFrame.setVisible(true);
 	}
-	public enum EffectType {
-		FLOATING,
-		ROTATING,
-		VIDEO
-	}
 	public enum SizeReference {
 		BASED_ON_LONGER_AXIS, //When making Backgrounds
 		BASED_ON_SHORTER_AXIS //When making Characters
 	}
-	public String getLuaScript(int imageIndex) {
+	public String getLuaScript() {
 		String script="--"+effectName+"starts\nstart="+startTime.toString()+"\nend_="+endTime.toString()+"\n";
 		return script;
 	}
 	public String getInfo() {
 		return effectName+", Starts at "+startTime.toString()+", ends at "+endTime.toString()+". Image at \""+imagePath+"\"";
+	}
+	public String imagePathDependencies(int k) {
+		return "local image"+k+"=gfx.CreateImage(background.GetPath() .. \""+imagePath+"\", 1);\n";
 	}
 }
