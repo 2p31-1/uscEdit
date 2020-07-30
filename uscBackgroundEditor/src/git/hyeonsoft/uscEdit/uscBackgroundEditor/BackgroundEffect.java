@@ -1,7 +1,6 @@
 package git.hyeonsoft.uscEdit.uscBackgroundEditor;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -28,6 +27,7 @@ public class BackgroundEffect {
 	private transient JFrame subFrame;
 	private transient JPanel mainPanel;
 	private void editEffectUpdate() {
+		try {subFrame.remove(mainPanel);}catch(NullPointerException e){}
 		mainPanel = new JPanel(new BorderLayout());
 		Vector <String> effectNames = new Vector<String>();
 		for(EffectType x : effect) {
@@ -37,7 +37,6 @@ public class BackgroundEffect {
 		effectList.setSelectionMode(1);
 		effectList.setLayoutOrientation(JList.VERTICAL);
 		JScrollPane effectListScroller = new JScrollPane(effectList);
-		effectListScroller.setPreferredSize(new Dimension(900,500));
 		mainPanel.add(effectListScroller, BorderLayout.CENTER);
 		JButton ok = new JButton("ok");
 		ok.addActionListener(e -> {
@@ -45,7 +44,6 @@ public class BackgroundEffect {
 			editEffectUpdate();
 		});
 		mainPanel.add(ok, BorderLayout.SOUTH);
-		subFrame.remove(mainPanel);
 		subFrame.add(mainPanel);
 		subFrame.revalidate();
 	}
