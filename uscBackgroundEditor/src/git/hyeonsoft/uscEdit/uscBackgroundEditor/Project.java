@@ -124,7 +124,7 @@ public class Project {
 		int selectedEffect = this.selectedEffect;
 		
 		try {
-		BackgroundEffect modifyBackgroundEffect = backgroundEffect.get(selectedEffect);
+		BackgroundEffect modifyBackgroundEffect = new BackgroundEffect(backgroundEffect.get(selectedEffect));
 		JTextField effectName = new JTextField(modifyBackgroundEffect.effectName);
 		JTextField startTime = new JTextField(modifyBackgroundEffect.startTime.toString());
 		JTextField endTime = new JTextField(modifyBackgroundEffect.endTime.toString());

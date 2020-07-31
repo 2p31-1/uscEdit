@@ -1,9 +1,11 @@
 package git.hyeonsoft.uscEdit.uscBackgroundEditor;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -23,10 +25,27 @@ public class BackgroundEffect {
 	public SizeReference sizeReference = SizeReference.BASED_ON_LONGER_AXIS;
 	public Vector<String> effectParameter = new Vector<String>();
 	public String imagePath = new String();
+	private transient int selected = -1;
 	private transient int imagesIndex = 0;
 	private transient JFrame subFrame;
 	private transient JPanel mainPanel;
+	public BackgroundEffect() {}
+	@SuppressWarnings("unchecked")
+	public BackgroundEffect(BackgroundEffect a) {
+		this.effectName = a.effectName;
+		this.startTime = a.startTime;
+		this.endTime = a.endTime;
+		this.fadeIn = a.fadeIn;
+		this.fadeOut = a.fadeOut;
+		this.width = a.width;
+		this.height = a.height;
+		this.effect = (Vector<EffectType>)(a.effect.clone());
+		this.sizeReference = a.sizeReference;
+		this.effectParameter = (Vector<String>)(a.effectParameter.clone());
+		this.imagePath = a.imagePath;
+	}
 	private void editEffectUpdate() {
+		selected =-1;
 		try {subFrame.remove(mainPanel);}catch(NullPointerException e){}
 		mainPanel = new JPanel(new BorderLayout());
 		Vector <String> effectNames = new Vector<String>();
@@ -38,14 +57,56 @@ public class BackgroundEffect {
 		effectList.setLayoutOrientation(JList.VERTICAL);
 		JScrollPane effectListScroller = new JScrollPane(effectList);
 		mainPanel.add(effectListScroller, BorderLayout.CENTER);
-		JButton ok = new JButton("ok");
-		ok.addActionListener(e -> {
-			effect.add(new Floating());
+		JButton newEffect = new JButton("new");
+		JButton editEffect = new JButton("edit");
+		JButton deleteEffect = new JButton("delete");
+		effectList.addListSelectionListener(e -> {
+			selected = effectList.getSelectedIndex();
+		});
+		newEffect.addActionListener(e -> {
+			if(selected!=-1) {
+				effect.add(selected,new EffectType());
+			}else {
+				effect.add(new EffectType());
+			}
 			editEffectUpdate();
 		});
-		mainPanel.add(ok, BorderLayout.SOUTH);
+		editEffect.addActionListener(e -> {
+			editEffectType(selected);
+		});
+		deleteEffect.addActionListener(e -> {
+			if(selected!=-1) effect.remove(selected);
+			editEffectUpdate();
+		});
+		JPanel buttonPanel = new JPanel(new GridLayout(0, 3));
+		buttonPanel.add(newEffect);
+		buttonPanel.add(editEffect);
+		buttonPanel.add(deleteEffect);
+		subFrame.add(buttonPanel, BorderLayout.SOUTH);
 		subFrame.add(mainPanel);
 		subFrame.revalidate();
+	}
+	@SuppressWarnings("unchecked")
+	public void editEffectType(int selected) {
+		JFrame f = new JFrame();
+		f.setSize(500, 700);
+		f.setTitle("edit effect type");
+		JPanel p = new JPanel();
+		String[] effectTypeClasses = {"EffectType", "Floating"};
+		JComboBox<String> effectType = new JComboBox<String>(effectTypeClasses);
+		effectType.addActionListener(e->{
+			int s = effectType.getSelectedIndex();
+			try {
+				Class<EffectType> c = (Class<EffectType>)Class.forName("git.hyeonsoft.uscEdit.uscBackgroundEditor.EffectType."+effectTypeClasses[s]);
+				effect.set(selected, c.getConstructor().newInstance());
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			editEffectUpdate();
+		});
+		p.add(effectType);
+		f.add(p);
+		f.setVisible(true);
 	}
 	public void editEffect() {
 		subFrame = new JFrame();
