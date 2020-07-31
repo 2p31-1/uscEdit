@@ -72,7 +72,7 @@ public class BackgroundEffect {
 			editEffectUpdate();
 		});
 		editEffect.addActionListener(e -> {
-			editEffectType(selected);
+			if(selected!=-1) editEffectType(selected);
 		});
 		deleteEffect.addActionListener(e -> {
 			if(selected!=-1) effect.remove(selected);
