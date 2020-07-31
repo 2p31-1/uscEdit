@@ -14,7 +14,7 @@ public class Floating implements EffectType {
 	@Override
 	public String getLuaScript() {
 		// TODO Auto-generated method stub
-		return null;
+		return "y=y+math.sin(real*"+parameters[0]+")*"+parameters[1]+";";
 	}
 
 	@Override
@@ -26,6 +26,12 @@ public class Floating implements EffectType {
 	public String getInfo() {
 		// TODO Auto-generated method stub
 		return "Floating (Speed="+parameters[0]+", amplitude="+parameters[1]+")";
+	}
+
+	@Override
+	public String getLuaInitializeScript() {
+		// TODO Auto-generated method stub
+		return "";
 	}
 	
 

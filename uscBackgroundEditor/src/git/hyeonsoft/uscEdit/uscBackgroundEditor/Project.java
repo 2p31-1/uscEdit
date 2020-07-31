@@ -241,10 +241,8 @@ public class Project {
 		int result = folderChooser.showSaveDialog(dialog);
 		Vector<String> images = new Vector<String>();
 		for(int i=0;i<backgroundEffect.size();i++) {
-			if(!images.contains(backgroundEffect.get(i).imagePathDependencies(i))) {
-				images.add(backgroundEffect.get(i).imagePathDependencies(i));
-			}
-			backgroundEffect.get(i).imagesIndex = i;
+			backgroundEffect.get(i).setImagesIndex(i);
+			images.add(backgroundEffect.get(i).getLuaInitializeScript());
 		}
 		
 		if (result==JFileChooser.CANCEL_OPTION)return;
