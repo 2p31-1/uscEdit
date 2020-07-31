@@ -92,7 +92,7 @@ public class BackgroundEffect {
 		f.setSize(500, 700);
 		f.setTitle("edit effect type");
 		JPanel p = new JPanel();
-		String[] effectTypeClasses = {"EffectType", "Floating"};
+		String[] effectTypeClasses = {"EffectType", "Floating", "ImagePrint"};
 		JComboBox<String> effectType = new JComboBox<String>(effectTypeClasses);
 		effectType.addActionListener(e->{
 			int s = effectType.getSelectedIndex();
@@ -150,7 +150,7 @@ public class BackgroundEffect {
 			break;
 		}
 		for(EffectType x : effect) {
-			script+=x.getLuaScript()+"\n";
+			script+=x.getLuaScript(imagesIndex)+"\n";
 		}
 		script+="end\n";
 		return script;

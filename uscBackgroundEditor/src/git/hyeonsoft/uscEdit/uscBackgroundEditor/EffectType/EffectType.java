@@ -4,7 +4,7 @@ public class EffectType {
 	public String[] parameters;
 	public String[] parameterNames= {};
 	
-	public String getLuaScript() {
+	public String getLuaScript(int imageIndex) {
 		// TODO Auto-generated method stub
 		return "";
 	}
