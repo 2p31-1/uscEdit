@@ -13,15 +13,9 @@ public class Floating extends EffectType {
 	
 	@Override
 	public String getLuaScript(int imageIndex) {
-		// TODO Auto-generated method stub
 		return "y=y+math.sin(real*"+parameters[0]+")*"+parameters[1]+";";
 	}
 
-	@Override
-	public String getLuaInitializeScript() {
-		// TODO Auto-generated method stub
-		return "";
-	}
 	
 
 }

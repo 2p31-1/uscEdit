@@ -48,8 +48,8 @@ public class Project {
 		dialogControl.setLayout( null );
 		dialogControl.setVisible(false);
 		JDialog dialog = new JDialog(dialogControl);
-		dialog.setLayout(new GridLayout(10, 2));
-		dialog.setSize(600, 300);
+		dialog.setLayout(new GridLayout(11, 2));
+		dialog.setSize(600, 400);
 		dialog.setTitle("Add Effects");
 		
 		BackgroundEffect modifyBackgroundEffect = new BackgroundEffect();
@@ -61,9 +61,12 @@ public class Project {
 		JTextField width = new JTextField(modifyBackgroundEffect.width.toString());
 		JTextField height = new JTextField(modifyBackgroundEffect.height.toString());
 		JTextField imagePath = new JTextField(modifyBackgroundEffect.imagePath);
-		String sizeReferenceText[] = {"longer axis", "shorter axis"};
+		String sizeReferenceText[] = {"longer axis", "shorter axis", "abstract", "relative"};
 		JComboBox <String> sizeReference = new JComboBox<String>(sizeReferenceText);
 		sizeReference.setSelectedIndex(modifyBackgroundEffect.sizeReference.ordinal());
+		String fileTypeText[] = {"Image", "Video", "Else"};
+		JComboBox<String> fileType  =  new JComboBox<String>(fileTypeText);
+		fileType.setSelectedIndex(modifyBackgroundEffect.fileType.ordinal());
 		dialog.add(new JLabel("effect name"));
 		dialog.add(effectName);
 		dialog.add(new JLabel("start time"));
@@ -78,10 +81,12 @@ public class Project {
 		dialog.add(width);
 		dialog.add(new JLabel("size height"));
 		dialog.add(height);
-		dialog.add(new JLabel("image path"));
+		dialog.add(new JLabel("file path"));
 		dialog.add(imagePath);
 		dialog.add(new JLabel("size 1.0 based on"));
 		dialog.add(sizeReference);
+		dialog.add(new JLabel("file Type"));
+		dialog.add(fileType);
 		JButton ok = new JButton("ok");
 		JButton editEffect = new JButton("Edit Effects");
 		ok.addActionListener(e -> {
@@ -94,6 +99,7 @@ public class Project {
 			modifyBackgroundEffect.imagePath=imagePath.getText();
 			modifyBackgroundEffect.effectName=(effectName.getText());
 			modifyBackgroundEffect.sizeReference=BackgroundEffect.SizeReference.values()[sizeReference.getSelectedIndex()];
+			modifyBackgroundEffect.fileType=BackgroundEffect.FileType.values()[fileType.getSelectedIndex()];
 			if(selectedEffect!=-1)backgroundEffect.add(selectedEffect, modifyBackgroundEffect);
 			else backgroundEffect.add(modifyBackgroundEffect);
 			sup.makeScreen();
@@ -118,8 +124,8 @@ public class Project {
 		dialogControl.setLayout( null );
 		dialogControl.setVisible(false);
 		JDialog dialog = new JDialog(dialogControl);
-		dialog.setLayout(new GridLayout(10, 2));
-		dialog.setSize(600, 300);
+		dialog.setLayout(new GridLayout(11, 2));
+		dialog.setSize(600, 400);
 		dialog.setTitle("Edit Effects");
 		int selectedEffect = this.selectedEffect;
 		
@@ -133,9 +139,12 @@ public class Project {
 		JTextField width = new JTextField(modifyBackgroundEffect.width.toString());
 		JTextField height = new JTextField(modifyBackgroundEffect.height.toString());
 		JTextField imagePath = new JTextField(modifyBackgroundEffect.imagePath);
-		String sizeReferenceText[] = {"longer axis", "shorter axis"};
+		String sizeReferenceText[] = {"longer axis", "shorter axis", "abstract", "relative"};
 		JComboBox <String> sizeReference = new JComboBox<String>(sizeReferenceText);
 		sizeReference.setSelectedIndex(modifyBackgroundEffect.sizeReference.ordinal());
+		String fileTypeText[] = {"Image", "Video", "Else"};
+		JComboBox<String> fileType  =  new JComboBox<String>(fileTypeText);
+		fileType.setSelectedIndex(modifyBackgroundEffect.fileType.ordinal());
 		dialog.add(new JLabel("effect name"));
 		dialog.add(effectName);
 		dialog.add(new JLabel("start time"));
@@ -150,10 +159,12 @@ public class Project {
 		dialog.add(width);
 		dialog.add(new JLabel("size height"));
 		dialog.add(height);
-		dialog.add(new JLabel("image path"));
+		dialog.add(new JLabel("file path"));
 		dialog.add(imagePath);
 		dialog.add(new JLabel("size 1.0 based on"));
 		dialog.add(sizeReference);
+		dialog.add(new JLabel("file Type"));
+		dialog.add(fileType);
 		JButton ok = new JButton("ok");
 		JButton editEffect = new JButton("Edit Effects");
 		ok.addActionListener(e -> {
@@ -166,6 +177,7 @@ public class Project {
 			modifyBackgroundEffect.imagePath=imagePath.getText();
 			modifyBackgroundEffect.effectName=(effectName.getText());
 			modifyBackgroundEffect.sizeReference=BackgroundEffect.SizeReference.values()[sizeReference.getSelectedIndex()];
+			modifyBackgroundEffect.fileType=BackgroundEffect.FileType.values()[fileType.getSelectedIndex()];
 			backgroundEffect.set(selectedEffect, modifyBackgroundEffect);
 			sup.makeScreen();
 			dialogControl.setVisible(false);
@@ -270,6 +282,7 @@ public class Project {
 					"	small=resY\n"
 					+ "	large=resX\n" + 
 					"end\n"
+					+ "local btn = {false, false, false, false, false, false};\n"
 					+ "function render_bg(deltaTime)\n"
 					+ "local start, end_\n" + 
 					"if resX<resY then\n" + 
@@ -280,10 +293,21 @@ public class Project {
 					"	large=resX\n" + 
 					"end\n"
 					+ "background.DrawShader()\n"
-					+ "local bartime, offsync, real = background.GetTiming()\n").getBytes());
+					+ "local bartime, offsync, real = background.GetTiming()\n"
+					+ "	btn_p = {false, false, false, false, false, false};\n" + 
+					"	for i=0,5 do\n" + 
+					"			if game.GetButton(i) then\n" + 
+					"			if btn[i] == false then\n" + 
+					"				btn_p[i] = true\n" + 
+					"				btn[i]=true\n" + 
+					"			end\n" + 
+					"		else\n" + 
+					"			btn[i]=false\n" + 
+					"		end\n" + 
+					"	end\n").getBytes());
 			for(int i=0;i<backgroundEffect.size();i++) {
 				fos.write(backgroundEffect.get(i).getLuaScript().getBytes());
-				fos.write("\n".getBytes());
+				fos.write("\ngfx.BeginPath()\n".getBytes());
 			}
 			fos.write("end\n".getBytes());
 			fos.close();

@@ -20,6 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 
+import git.hyeonsoft.uscEdit.uscBackgroundEditor.tools.VideoToImage;
+
 public class UscBackgroundEditor {
 	
 	Project project;
@@ -120,6 +122,8 @@ public class UscBackgroundEditor {
 		JMenuItem itemEffectCopy = new JMenuItem("Copy effect");
 		JMenuItem itemEffectPaste = new JMenuItem("Paste effect");
 		JMenuItem itemEffectDelete = new JMenuItem("Delete effect");
+		JMenu menuTools = new JMenu("Tools");
+		JMenuItem itemVideoToImage = new JMenuItem("convert videos to images");
 
 		menuFile.setMnemonic(KeyEvent.VK_F);
 		menuEdit.setMnemonic(KeyEvent.VK_E);
@@ -164,6 +168,9 @@ public class UscBackgroundEditor {
 		itemEffectDelete.addActionListener(e -> {
 			project.deleteEffect(this);
 		});
+		itemVideoToImage.addActionListener(e->{
+			new VideoToImage();
+		});
 		
 		menuFile.add(itemNew);
 		menuFile.add(itemLoad);
@@ -174,8 +181,10 @@ public class UscBackgroundEditor {
 		menuEdit.add(itemEffectCopy);
 		menuEdit.add(itemEffectPaste);
 		menuEdit.add(itemEffectDelete);
+		menuTools.add(itemVideoToImage);
 		menuBar.add(menuFile);
 		menuBar.add(menuEdit);
+		menuBar.add(menuTools);
 		mainWindow.setJMenuBar(menuBar);
 	}
 	

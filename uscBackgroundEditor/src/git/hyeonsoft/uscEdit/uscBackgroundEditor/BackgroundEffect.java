@@ -2,6 +2,8 @@ package git.hyeonsoft.uscEdit.uscBackgroundEditor;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -25,6 +27,7 @@ public class BackgroundEffect {
 	public SizeReference sizeReference = SizeReference.BASED_ON_LONGER_AXIS;
 	public Vector<String> effectParameter = new Vector<String>();
 	public String imagePath = new String();
+	public FileType fileType = FileType.IMAGE;
 	private transient int selected = -1;
 	private transient int imagesIndex = 0;
 	private transient JFrame subFrame;
@@ -43,6 +46,7 @@ public class BackgroundEffect {
 		this.sizeReference = a.sizeReference;
 		this.effectParameter = (Vector<String>)(a.effectParameter.clone());
 		this.imagePath = a.imagePath;
+		this.fileType = a.fileType;
 	}
 	private void editEffectUpdate() {
 		selected =-1;
@@ -50,7 +54,11 @@ public class BackgroundEffect {
 		mainPanel = new JPanel(new BorderLayout());
 		Vector <String> effectNames = new Vector<String>();
 		for(EffectType x : effect) {
-			effectNames.add(x.getInfo());
+			try {
+				effectNames.add(x.getInfo().substring(0, 150));
+			}catch(IndexOutOfBoundsException e) {
+				effectNames.add(x.getInfo());
+			}
 		}
 		JList<String> effectList = new JList<String>(effectNames);
 		effectList.setSelectionMode(1);
@@ -91,21 +99,56 @@ public class BackgroundEffect {
 		JFrame f = new JFrame();
 		f.setSize(500, 700);
 		f.setTitle("edit effect type");
-		JPanel p = new JPanel();
-		String[] effectTypeClasses = {"EffectType", "Floating", "ImagePrint"};
+		JPanel p = new JPanel(new BorderLayout());
+		String[] effectTypeClasses = {"EffectType", "Floating", "ImagePrint", "KeySound"};
 		JComboBox<String> effectType = new JComboBox<String>(effectTypeClasses);
+		effectType.setSelectedItem(effect.get(selected).getClass().getSimpleName());
 		effectType.addActionListener(e->{
 			int s = effectType.getSelectedIndex();
 			try {
 				Class<EffectType> c = (Class<EffectType>)Class.forName("git.hyeonsoft.uscEdit.uscBackgroundEditor.EffectType."+effectTypeClasses[s]);
 				effect.set(selected, c.getConstructor().newInstance());
+				f.setVisible(false);
+				editEffectType(selected);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 			editEffectUpdate();
 		});
-		p.add(effectType);
+		p.add(effectType, BorderLayout.NORTH);
+		p.add(effect.get(selected).getSettingPanel(), BorderLayout.CENTER);
 		f.add(p);
+		f.addWindowListener(new WindowListener(){
+			@Override
+			public void windowOpened(WindowEvent e) {
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				editEffectUpdate();
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+			}
+			
+		});
 		f.setVisible(true);
 	}
 	public void editEffect() {
@@ -120,6 +163,11 @@ public class BackgroundEffect {
 		BASED_ON_SHORTER_AXIS, //When making Characters
 		ABSTRACT,
 		RELATIVE
+	}
+	public enum FileType{
+		IMAGE,
+		VIDEO,
+		NONE
 	}
 	public void setImagesIndex(int k) {
 		imagesIndex = k;
@@ -156,11 +204,14 @@ public class BackgroundEffect {
 		return script;
 	}
 	public String getLuaInitializeScript() {
+		String initialize = "";
 		if(!imagePath.equals("")) {
-			return "local image"+imagesIndex+"=gfx.CreateImage(background.GetPath() .. \""+imagePath+"\", 1);\n";
-		}else {
-			return "";
+			initialize+= "local image"+imagesIndex+"=gfx.CreateImage(background.GetPath() .. \""+imagePath+"\", 1);\n";
 		}
+		for(EffectType e : effect) {
+			initialize += e.getLuaInitializeScript(imagesIndex)+"\n";
+		}
+		return initialize;
 	}
 	public String getInfo() {
 		return effectName+", Starts at "+startTime.toString()+", ends at "+endTime.toString()+". Image at \""+imagePath+"\"";

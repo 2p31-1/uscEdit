@@ -1,11 +1,41 @@
 package git.hyeonsoft.uscEdit.uscBackgroundEditor.EffectType;
 
+import java.awt.GridLayout;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 public class EffectType {
-	public String[] parameters;
+	public String[] parameters = {};
 	public String[] parameterNames= {};
 	
+	public JPanel getSettingPanel() {
+		JPanel settingPanelWrap = new JPanel();
+		settingPanelWrap.setSize(500, (parameters.length+1)*40);
+		JPanel settingPanel = new JPanel(new GridLayout(parameters.length+1, 2));
+		settingPanel.setSize(500, (parameters.length+1)*40);
+		JLabel[] parametersLabel = new JLabel[parameters.length];
+		JTextField[] parametersTextField = new JTextField[parameters.length];
+		for(int i=0;i<parameters.length;i++){
+			parametersLabel[i] = new JLabel(parameterNames[i]);
+			parametersTextField[i] = new JTextField(parameters[i]);
+			settingPanel.add(parametersLabel[i]);
+			settingPanel.add(parametersTextField[i]);
+		}
+		JButton ok = new JButton("ok");
+		ok.addActionListener(e->{
+			for(int i=0;i<parameters.length;i++){
+				parameters[i] = parametersTextField[i].getText();
+			}
+		});
+		settingPanel.add(ok);
+		settingPanelWrap.add(settingPanel);
+		return settingPanelWrap;
+	}
+	
 	public String getLuaScript(int imageIndex) {
-		// TODO Auto-generated method stub
 		return "";
 	}
 
@@ -20,8 +50,7 @@ public class EffectType {
 		return info;
 	}
 
-	public String getLuaInitializeScript() {
-		// TODO Auto-generated method stub
+	public String getLuaInitializeScript(int imageIndex) {
 		return "";
 	}
 }
