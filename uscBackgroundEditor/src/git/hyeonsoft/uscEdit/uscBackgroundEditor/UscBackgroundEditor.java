@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -169,7 +170,15 @@ public class UscBackgroundEditor {
 			project.deleteEffect(this);
 		});
 		itemVideoToImage.addActionListener(e->{
-			new VideoToImage();
+			try {
+				new VideoToImage();
+			}catch(Exception x){
+				JFrame alert = new JFrame();
+				alert.setSize(300, 100);
+				alert.add(new JLabel(x.getClass().getSimpleName()));
+				alert.setVisible(true);
+				x.printStackTrace();
+			}
 		});
 		
 		menuFile.add(itemNew);
