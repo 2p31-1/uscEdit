@@ -7,9 +7,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.google.gson.annotations.SerializedName;
+
 public class EffectType {
+	@SerializedName("type")
+	private String typeName;
 	public String[] parameters = {};
 	public String[] parameterNames= {};
+	
+	public EffectType() {
+		typeName = getClass().getName();
+	}
 	
 	public JPanel getSettingPanel() {
 		JPanel settingPanelWrap = new JPanel();

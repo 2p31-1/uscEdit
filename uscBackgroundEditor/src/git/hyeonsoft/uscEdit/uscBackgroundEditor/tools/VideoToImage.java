@@ -128,7 +128,7 @@ public class VideoToImage {
 				Picture picture;
 				for(;nowFrame<endFrame&&!isInterrupted();nowFrame++) {
 					picture = FrameGrab.getFrameFromFile(videoFile, nowFrame);
-					FileOutputStream imageout = new FileOutputStream(savePath+"frame"+nowFrame+".jpg");
+					FileOutputStream imageout = new FileOutputStream(savePath+"frame"+String.format("%05d", nowFrame)+".jpg");
 					ImageIO.write(AWTUtil.toBufferedImage(picture), "jpg", imageout);
 					imageout.close();
 				}

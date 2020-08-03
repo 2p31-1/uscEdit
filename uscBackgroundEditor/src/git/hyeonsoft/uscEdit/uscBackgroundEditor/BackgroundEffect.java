@@ -100,7 +100,8 @@ public class BackgroundEffect {
 		f.setSize(500, 700);
 		f.setTitle("edit effect type");
 		JPanel p = new JPanel(new BorderLayout());
-		String[] effectTypeClasses = {"EffectType", "Floating", "ImagePrint", "KeySound"};
+		String[] effectTypeClasses = {"EffectType", "Floating", "ImagePrint", "KeySound", "VideoPrint",
+				"PositionTransition", "PositionRelativeTransition"};
 		JComboBox<String> effectType = new JComboBox<String>(effectTypeClasses);
 		effectType.setSelectedItem(effect.get(selected).getClass().getSimpleName());
 		effectType.addActionListener(e->{
@@ -203,16 +204,30 @@ public class BackgroundEffect {
 		script+="end\n";
 		return script;
 	}
+	
+	
+	
 	public String getLuaInitializeScript() {
 		String initialize = "";
-		if(!imagePath.equals("")) {
-			initialize+= "local image"+imagesIndex+"=gfx.CreateImage(background.GetPath() .. \""+imagePath+"\", 1);\n";
+		switch(fileType) {
+			case IMAGE:
+				if(!imagePath.equals("")) {
+				initialize+= "local image"+imagesIndex+"=gfx.CreateImage(background.GetPath() .. \""+imagePath+"\", 1);\n";
+			}
+				break;
+			case VIDEO:
+				break;
+			default:
+				break;
 		}
 		for(EffectType e : effect) {
 			initialize += e.getLuaInitializeScript(imagesIndex)+"\n";
 		}
 		return initialize;
 	}
+	
+	
+	
 	public String getInfo() {
 		return effectName+", Starts at "+startTime.toString()+", ends at "+endTime.toString()+". Image at \""+imagePath+"\"";
 	}

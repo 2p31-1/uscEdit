@@ -2,6 +2,15 @@ package git.hyeonsoft.uscEdit.uscBackgroundEditor;
 // Save / Load files. Contains informations of background information.
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+
+import git.hyeonsoft.uscEdit.uscBackgroundEditor.EffectType.*;
 
 import java.awt.FileDialog;
 import java.awt.GridLayout;
@@ -10,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Vector;
@@ -81,7 +91,7 @@ public class Project {
 		dialog.add(width);
 		dialog.add(new JLabel("size height"));
 		dialog.add(height);
-		dialog.add(new JLabel("file path"));
+		dialog.add(new JLabel("image file path"));
 		dialog.add(imagePath);
 		dialog.add(new JLabel("size 1.0 based on"));
 		dialog.add(sizeReference);
@@ -159,7 +169,7 @@ public class Project {
 		dialog.add(width);
 		dialog.add(new JLabel("size height"));
 		dialog.add(height);
-		dialog.add(new JLabel("file path"));
+		dialog.add(new JLabel("image file path"));
 		dialog.add(imagePath);
 		dialog.add(new JLabel("size 1.0 based on"));
 		dialog.add(sizeReference);
@@ -199,6 +209,28 @@ public class Project {
 		selectedEffect=-1;
 		sup.makeScreen();
 	}
+	
+	public class JsonDeserializerWithInheritance<T> implements JsonDeserializer<T> {
+		 
+		 @Override
+		 public T deserialize(
+		     JsonElement json, Type typeOfT, JsonDeserializationContext context)
+		     throws JsonParseException {
+		     JsonObject jsonObject = json.getAsJsonObject();
+		     JsonPrimitive classNamePrimitive = (JsonPrimitive) jsonObject.get("type");
+		 
+		     String className = classNamePrimitive.getAsString();
+		 
+		     Class<?> clazz;
+		     try {
+		     clazz = Class.forName(className);
+		     } catch (ClassNotFoundException e) {
+		     throw new JsonParseException(e.getMessage());
+		     }
+		     return context.deserialize(jsonObject, clazz);
+		 }
+		}
+	//https://riptutorial.com/gson/example/22968/using-gson-with-inheritance
 	public void loadProject() {
 		JFrame f = new JFrame();
 	    f.setLayout( null );
@@ -209,7 +241,9 @@ public class Project {
 		projectfilename = dialog.getDirectory()+'\\'+dialog.getFile();
 		try{
 			Scanner fis = new Scanner(new File(projectfilename));
-			Gson gson = new Gson();
+			GsonBuilder builder = new GsonBuilder();
+			builder.registerTypeAdapter(EffectType.class, new JsonDeserializerWithInheritance<EffectType>());
+			Gson gson = builder.create();
 			String json = "";
 			while(fis.hasNextLine()) {
 				json+=fis.nextLine();
