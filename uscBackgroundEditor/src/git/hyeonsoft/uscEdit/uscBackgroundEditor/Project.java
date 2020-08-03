@@ -340,8 +340,8 @@ public class Project {
 					"		end\n" + 
 					"	end\n").getBytes());
 			for(int i=0;i<backgroundEffect.size();i++) {
-				fos.write(backgroundEffect.get(i).getLuaScript().getBytes());
 				fos.write("\ngfx.BeginPath()\n".getBytes());
+				fos.write(backgroundEffect.get(i).getLuaScript().getBytes());
 			}
 			fos.write("end\n".getBytes());
 			fos.close();
